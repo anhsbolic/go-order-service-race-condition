@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -19,10 +20,12 @@ func Log(status string, data interface{}) {
 		Data:   data,
 	}
 
-	f, err := os.OpenFile("logs/"+dt.Format("2006-01-02"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Println(err)
+	path := fmt.Sprintf(`/logs/%s`, dt.Format("2006-01-02"))
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		os.Mkdir(path, os.ModeDir)
 	}
+
+	f, _ := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModeDir)
 	defer f.Close()
 
 	logger := log.New(f, setLog.Status, log.LstdFlags)

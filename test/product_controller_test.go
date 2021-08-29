@@ -2,14 +2,10 @@ package test
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/anhsbolic/go-order-service-race-condition/app"
-	"github.com/anhsbolic/go-order-service-race-condition/helper"
 	"github.com/anhsbolic/go-order-service-race-condition/model/entity"
 	"github.com/anhsbolic/go-order-service-race-condition/repository"
-	"github.com/go-playground/validator/v10"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
@@ -18,38 +14,11 @@ import (
 	"strconv"
 	"strings"
 	"testing"
-	"time"
 )
 
-func setupTestDB() *sql.DB {
-	db, err := sql.Open("mysql", "root:newpass@tcp(localhost:3306)/order-service-race-condition-poc")
-	helper.PanicIfError(err)
-
-	db.SetMaxIdleConns(5)
-	db.SetMaxOpenConns(20)
-	db.SetConnMaxLifetime(60 * time.Minute)
-	db.SetConnMaxIdleTime(10 * time.Minute)
-
-	return db
-}
-
-func setupRouter(db *sql.DB) http.Handler {
-	validate := validator.New()
-	router := app.NewRouter(db, validate)
-
-	return router
-}
-
-func clearProductsTable(db *sql.DB) {
-	_, err := db.Exec("delete from products")
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-
 func TestGetProductsSuccess(t *testing.T) {
-	db := setupTestDB()
-	clearProductsTable(db)
+	db := SetupTestDB()
+	ClearProductsTable(db)
 
 	tx, _ := db.Begin()
 	productRepository := repository.NewProductRepository()
@@ -61,7 +30,7 @@ func TestGetProductsSuccess(t *testing.T) {
 	})
 	tx.Commit()
 
-	router := setupRouter(db)
+	router := SetupRouter(db)
 	request := httptest.NewRequest(http.MethodGet, "http://localhost:3000/api/products", nil)
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)
@@ -88,8 +57,8 @@ func TestGetProductsSuccess(t *testing.T) {
 }
 
 func TestGetProductByIdSuccess(t *testing.T) {
-	db := setupTestDB()
-	clearProductsTable(db)
+	db := SetupTestDB()
+	ClearProductsTable(db)
 
 	tx, _ := db.Begin()
 	productRepository := repository.NewProductRepository()
@@ -98,7 +67,7 @@ func TestGetProductByIdSuccess(t *testing.T) {
 	})
 	tx.Commit()
 
-	router := setupRouter(db)
+	router := SetupRouter(db)
 	request := httptest.NewRequest(http.MethodGet, "http://localhost:3000/api/products/"+strconv.Itoa(product.Id), nil)
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)
@@ -116,9 +85,9 @@ func TestGetProductByIdSuccess(t *testing.T) {
 }
 
 func TestGetProductByIdFailed(t *testing.T) {
-	db := setupTestDB()
-	clearProductsTable(db)
-	router := setupRouter(db)
+	db := SetupTestDB()
+	ClearProductsTable(db)
+	router := SetupRouter(db)
 
 	request := httptest.NewRequest(http.MethodGet, "http://localhost:3000/api/products/10000", nil)
 	recorder := httptest.NewRecorder()
@@ -135,9 +104,9 @@ func TestGetProductByIdFailed(t *testing.T) {
 }
 
 func TestCreateProductSuccess(t *testing.T) {
-	db := setupTestDB()
-	clearProductsTable(db)
-	router := setupRouter(db)
+	db := SetupTestDB()
+	ClearProductsTable(db)
+	router := SetupRouter(db)
 
 	requestBody := strings.NewReader(`{"name" : "Kaos Polos Hitam"}`)
 	request := httptest.NewRequest(http.MethodPost, "http://localhost:3000/api/products", requestBody)
@@ -148,21 +117,21 @@ func TestCreateProductSuccess(t *testing.T) {
 	router.ServeHTTP(recorder, request)
 
 	response := recorder.Result()
-	assert.Equal(t, 200, response.StatusCode)
+	assert.Equal(t, 201, response.StatusCode)
 
 	body, _ := ioutil.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(body, &responseBody)
 
-	assert.Equal(t, 200, int(responseBody["code"].(float64)))
+	assert.Equal(t, 201, int(responseBody["code"].(float64)))
 	assert.Equal(t, "OK", responseBody["status"])
 	assert.Equal(t, "Kaos Polos Hitam", responseBody["data"].(map[string]interface{})["name"])
 }
 
 func TestCreateProductFailed(t *testing.T) {
-	db := setupTestDB()
-	clearProductsTable(db)
-	router := setupRouter(db)
+	db := SetupTestDB()
+	ClearProductsTable(db)
+	router := SetupRouter(db)
 
 	requestBody := strings.NewReader(`{"name" : ""}`)
 	request := httptest.NewRequest(http.MethodPost, "http://localhost:3000/api/products", requestBody)
@@ -184,8 +153,8 @@ func TestCreateProductFailed(t *testing.T) {
 }
 
 func TestGetInventoryByProductIdSuccess(t *testing.T) {
-	db := setupTestDB()
-	clearProductsTable(db)
+	db := SetupTestDB()
+	ClearProductsTable(db)
 
 	inventoryRepository := repository.NewInventoryRepository()
 	productRepository := repository.NewProductRepository()
@@ -205,7 +174,7 @@ func TestGetInventoryByProductIdSuccess(t *testing.T) {
 
 	tx.Commit()
 
-	router := setupRouter(db)
+	router := SetupRouter(db)
 	url := fmt.Sprintf(`http://localhost:3000/api/products/%s/inventory`, strconv.Itoa(product.Id))
 	request := httptest.NewRequest(http.MethodGet, url, nil)
 	recorder := httptest.NewRecorder()
@@ -226,10 +195,10 @@ func TestGetInventoryByProductIdSuccess(t *testing.T) {
 }
 
 func TestGetInventoryByProductIdFailed(t *testing.T) {
-	db := setupTestDB()
-	clearProductsTable(db)
+	db := SetupTestDB()
+	ClearProductsTable(db)
 
-	router := setupRouter(db)
+	router := SetupRouter(db)
 	request := httptest.NewRequest(http.MethodGet, "http://localhost:3000/api/products/20000/inventory", nil)
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)

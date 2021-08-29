@@ -84,8 +84,6 @@ func internalServerError(writer http.ResponseWriter, request *http.Request, err 
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusInternalServerError)
 
-	helper.Log("Error - ", err)
-
 	webResponse := web.JSONResponse{
 		Code:   http.StatusInternalServerError,
 		Status: "INTERNAL SERVER ERROR",
