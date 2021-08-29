@@ -1,5 +1,8 @@
 .DS_Store
 .idea
 .env
+.env.test
+/test/.env
+
 logs
 /logs
