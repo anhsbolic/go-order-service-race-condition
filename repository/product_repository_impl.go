@@ -45,7 +45,7 @@ func (repository *ProductRepositoryImpl) FindById(ctx context.Context, tx *sql.T
 
 		return product, nil
 	} else {
-		return product, errors.New("not found")
+		return product, errors.New("product not found")
 	}
 }
 
