@@ -31,8 +31,8 @@ func TestRaceConditionOrder(t *testing.T) {
 
 	inventory := inventoryRepository.Save(context.Background(), tx, entity.Inventory{
 		ProductId:      product.Id,
-		StoredStock:    50,
-		AvailableStock: 50,
+		StoredStock:    100,
+		AvailableStock: 100,
 		ReservedStock:  0,
 	})
 
