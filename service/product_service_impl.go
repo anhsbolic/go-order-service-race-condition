@@ -21,7 +21,8 @@ type ProductServiceImpl struct {
 func NewProductService(
 	inventoryRepository repository.InventoryRepository,
 	productRepository repository.ProductRepository,
-	db *sql.DB, validate *validator.Validate,
+	db *sql.DB,
+	validate *validator.Validate,
 ) ProductService {
 	return &ProductServiceImpl{
 		InventoryRepository: inventoryRepository,

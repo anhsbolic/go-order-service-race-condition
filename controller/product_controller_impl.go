@@ -20,11 +20,12 @@ func NewProductController(productService service.ProductService) ProductControll
 func (controller *ProductControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	productResponses := controller.ProductService.FindAll(request.Context())
 	jsonResponse := web.JSONResponse{
-		Code:   200,
+		Code:   http.StatusOK,
 		Status: "OK",
 		Data:   productResponses,
 	}
 
+	writer.WriteHeader(http.StatusOK)
 	helper.WriteToResponseBody(writer, jsonResponse)
 }
 
@@ -35,11 +36,12 @@ func (controller *ProductControllerImpl) FindById(writer http.ResponseWriter, re
 
 	productResponse := controller.ProductService.FindById(request.Context(), id)
 	jsonResponse := web.JSONResponse{
-		Code:   200,
+		Code:   http.StatusOK,
 		Status: "OK",
 		Data:   productResponse,
 	}
 
+	writer.WriteHeader(http.StatusOK)
 	helper.WriteToResponseBody(writer, jsonResponse)
 }
 
@@ -49,11 +51,12 @@ func (controller *ProductControllerImpl) Create(writer http.ResponseWriter, requ
 
 	productResponse := controller.ProductService.Create(request.Context(), productCreateRequest)
 	jsonResponse := web.JSONResponse{
-		Code:   200,
+		Code:   http.StatusCreated,
 		Status: "OK",
 		Data:   productResponse,
 	}
 
+	writer.WriteHeader(http.StatusCreated)
 	helper.WriteToResponseBody(writer, jsonResponse)
 }
 
@@ -64,11 +67,12 @@ func (controller *ProductControllerImpl) FindInventoryByProductId(writer http.Re
 
 	inventoryProductResponse := controller.ProductService.FindInventoryByProductId(request.Context(), id)
 	jsonResponse := web.JSONResponse{
-		Code:   200,
+		Code:   http.StatusOK,
 		Status: "OK",
 		Data:   inventoryProductResponse,
 	}
 
+	writer.WriteHeader(http.StatusOK)
 	helper.WriteToResponseBody(writer, jsonResponse)
 }
 
@@ -82,10 +86,11 @@ func (controller *ProductControllerImpl) UpdateInventoryByProductId(writer http.
 
 	inventoryResponse := controller.ProductService.UpdateInventoryByProductId(request.Context(), id, inventoryUpdateRequest)
 	jsonResponse := web.JSONResponse{
-		Code:   200,
+		Code:   http.StatusOK,
 		Status: "OK",
 		Data:   inventoryResponse,
 	}
 
+	writer.WriteHeader(http.StatusOK)
 	helper.WriteToResponseBody(writer, jsonResponse)
 }
