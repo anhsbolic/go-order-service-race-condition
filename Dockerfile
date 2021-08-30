@@ -13,3 +13,4 @@ RUN go build -o order-service-api .
 EXPOSE 3000
 
 CMD ["./order-service-api"]
+#CMD ["go", "run", "/app/main.go"]

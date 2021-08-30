@@ -7,7 +7,7 @@ services:
       dockerfile: ./Dockerfile
     container_name: go-order-service-api
     environment:
-      DB_HOST: mysql
+      DB_HOST: db
       DB_PORT: 3306
       DB_USER: root
       DB_PASSWORD: yuk87678Ini08Apa
@@ -28,7 +28,9 @@ services:
     ports:
       - 33060:3306
     volumes:
-      - db_mysql:/var/lib/mysqlÏ
+      - db_mysql:/var/lib/mysql
+    networks:
+      - go_api
 
   pma:
     image: phpmyadmin/phpmyadmin
