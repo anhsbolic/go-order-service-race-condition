@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: go-order-service-api
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: yuk87678Ini08Apa
+      DB_NAME: go-order-service
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    networks:
+      - go_api
+
+  db:
+    image: mysql:8.0
+    container_name: db-mysql
+    environment:
+      MYSQL_DATABASE: go-order-service
+      MYSQL_ROOT_PASSWORD: yuk87678Ini08Apa
+    ports:
+      - 33060:3306
+    volumes:
+      - db_mysql:/var/lib/mysqlÏ
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - 5003:80
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    container_name: pma
+
+
+volumes:
+  db_mysql:
+
+networks:
+  go_api:
