@@ -56,14 +56,13 @@ Proses yang dilakukan didalam aplikasi POC ini hanya step 1 - 3 saja karena suda
 2. Membuat testing untuk setiap endpoint API
 3. Membuat testing untuk membuktikan solusi yang direncanakan (POC), dengan langkah-langkah
    * membuat produk dengan stok awal 100
-   * memesan 1 pcs produk tersebut (POST Order) berkali-kali, sampai pemesanan ditolak karena sotk sudah tidak tersedia, dalam hal ini yaitu saat pemesanan ke 101
+   * memesan 1 pcs produk tersebut (POST Order) berkali-kali, sampai pemesanan ditolak karena stok sudah tidak tersedia, dalam hal ini yaitu saat pemesanan ke 101
    * ekspektasi : 100 pesanan pertama diterima (code response 201), dan saat pesanan ke 101  ditolak (code response 400)
 
 ### Aplikasi
 Merupakan Aplikasi REST API yang dibuat dengan menggunakan
 1. GoLang
 2. Database MySQL
-3. Docker
 
 ### File Penting
 Di dalam kode aplikasi terdapat 2 file yang penting
@@ -81,9 +80,13 @@ Sebelum menjalankan Aplikasi, import terlebih dahulu struktur database MySQL men
 
 ### Menjalankan Aplikasi
 1. Pastikan Sudah di branch main
-2. Jalankan Aplikasi GoLang dengan menjalankan perintah "go run main.go" di terminal, apabila ingin melakukan testing API secara manual
-3. Jalankan Setiap Unit Testing yang ada di dalam folder "/test", apabila ingin melakukan testing API secara otomatis
-4. Menjalankan Unit Testing bisa dengan menggunakan fitur "run test" di VS Code atau GoLand. Selain itu, bisa juga dengan menjalankan perintah " go test github.com/anhsbolic/go-order-service-race-condition/test -v"
+2. db-order-service-race-condition-poc.sql sudah diimport ke database MySQL
+3. buat file .env di root folder
+4. buat file .env di folder /test
+5. isi variabel-variable kedua file .env tersebut dengan konfigurasi database mysql sesuai dengan environtment lokal yang Anda gunakan
+6. Jalankan Aplikasi GoLang dengan menjalankan perintah "go run main.go" di terminal, apabila ingin melakukan testing API secara manual
+7. Jalankan Setiap Unit Testing yang ada di dalam folder "/test", apabila ingin melakukan testing API secara otomatis
+8. Menjalankan Unit Testing bisa dengan menggunakan fitur "run test" di VS Code atau GoLand. Selain itu, bisa juga dengan menjalankan perintah " go test github.com/anhsbolic/go-order-service-race-condition/test -v"
 
 ### Menjalankan Test POC untuk Solusi Masalah di atas
 1. Jalankan Test untuk Fungsi "TestRaceConditionOrder" di file "/test/race_condition_order_test.go"
